@@ -81,7 +81,7 @@ docker run -it --rm \
     --cpus 2 \
     \
     `# ── Writable mounts (targeted exceptions to read-only) ─` \
-    --tmpfs /tmp:rw,noexec,nosuid,size=512m \
+    --tmpfs /tmp:rw,nosuid,size=512m \
     --tmpfs /run:rw,noexec,nosuid,size=64m \
     -v "$VOLUME_NAME":/home/coder \
     -v "$PROJECT_DIR":/workspace \

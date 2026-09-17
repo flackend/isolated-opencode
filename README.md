@@ -9,7 +9,7 @@ A hardened Docker container for running [OpenCode](https://opencode.ai) and [her
 | **User** | Non-root (`coder`, UID 1000) |
 | **Capabilities** | All dropped (`--cap-drop ALL`) |
 | **Privileges** | `no-new-privileges` enforced |
-| **Filesystem** | Read-only rootfs; writable only at `/tmp` (tmpfs, noexec), `/home/coder` (volume), `/workspace` (bind mount) |
+| **Filesystem** | Read-only rootfs; writable only at `/tmp` (tmpfs, nosuid), `/run` (tmpfs, noexec, nosuid), `/home/coder` (volume), `/workspace` (bind mount) |
 | **Network** | Isolated bridge (`enable_icc=false`), no host/LAN access |
 | **Resources** | 4 GB memory, 2 CPUs, 256 PID limit |
 | **Secrets** | Files at `/run/secrets/` (read-only), not env vars in `docker inspect` |

@@ -61,7 +61,7 @@ sandbox_run() {
         --pids-limit 256 \
         --memory 4g \
         --cpus 2 \
-        --tmpfs /tmp:rw,noexec,nosuid,size=512m \
+        --tmpfs /tmp:rw,nosuid,size=512m \
         --tmpfs /run:rw,noexec,nosuid,size=64m \
         --network "$NETWORK" \
         --dns 1.1.1.1 \
@@ -156,19 +156,18 @@ else
     fail "/tmp is not writable" "$TMP_TEST"
 fi
 
-# Test 7: /tmp has noexec
-NOEXEC_TEST=$(sandbox_run bash -c "cp /bin/echo /tmp/test-exec && /tmp/test-exec hello" 2>&1 || true)
-if echo "$NOEXEC_TEST" | grep -qi "permission denied\|cannot execute\|not permitted"; then
-    pass "/tmp has noexec flag (cannot execute binaries)"
+# Test 7: /tmp has nosuid and /run has noexec
+RUN_MOUNT=$(sandbox_run mount | grep "on /run" 2>&1 || true)
+TMP_MOUNT=$(sandbox_run mount | grep "on /tmp" 2>&1 || true)
+if echo "$RUN_MOUNT" | grep -q "noexec"; then
+    pass "/run has noexec flag"
 else
-    # noexec may not block scripts, only direct binary execution
-    # Check mount flags instead
-    MOUNT_FLAGS=$(sandbox_run mount | grep "on /tmp" 2>&1 || true)
-    if echo "$MOUNT_FLAGS" | grep -q "noexec"; then
-        pass "/tmp has noexec flag (verified via mount)"
-    else
-        fail "/tmp does NOT have noexec flag" "$NOEXEC_TEST"
-    fi
+    fail "/run does NOT have noexec flag" "$RUN_MOUNT"
+fi
+if echo "$TMP_MOUNT" | grep -q "nosuid"; then
+    pass "/tmp has nosuid flag"
+else
+    fail "/tmp does NOT have nosuid flag" "$TMP_MOUNT"
 fi
 
 section "Security — Dangerous Tools Absent"
@@ -301,7 +300,7 @@ SECRET_TEST=$(docker run --rm \
     --security-opt no-new-privileges:true \
     --cap-drop ALL \
     --user 1000:1000 \
-    --tmpfs /tmp:rw,noexec,nosuid,size=512m \
+    --tmpfs /tmp:rw,nosuid,size=512m \
     --tmpfs /run:rw,noexec,nosuid,size=64m \
     --network "$NETWORK" \
     -v "$TEST_SECRET_DIR/test_api_key:/run/secrets/test_api_key:ro" \
