@@ -1,0 +1,15 @@
+# Build artifacts
+*.tar
+*.tar.gz
+
+# Runtime data
+secrets/
+*.env
+
+# Documentation artifacts (not needed in image)
+README.md
+tests.sh
+run.sh
+.git/
+.gitignore
+.dockerignore
