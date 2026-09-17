@@ -7,11 +7,8 @@
 #
 # Prerequisites:
 #   1. Build the image:    docker build -t opencode-sandbox .
-#   2. Create the network: docker network create --driver bridge \
-#                            --opt com.docker.network.bridge.enable_icc=false \
-#                            --subnet=172.30.0.0/24 opencode-isolated
-#   3. Create secrets dir: mkdir -p ~/.config/opencode/secrets/
-#   4. Add API key files:  echo "sk-ant-..." > ~/.config/opencode/secrets/anthropic_api_key
+#   2. Create secrets dir: mkdir -p ~/.config/opencode/secrets/
+#   3. Add API key files:  echo "sk-ant-..." > ~/.config/opencode/secrets/anthropic_api_key
 
 set -euo pipefail
 
@@ -59,7 +56,6 @@ if ! docker network inspect opencode-isolated &>/dev/null; then
     docker network create \
         --driver bridge \
         --opt com.docker.network.bridge.enable_icc=false \
-        --subnet=172.30.0.0/24 \
         opencode-isolated
 fi
 

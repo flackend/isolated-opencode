@@ -94,7 +94,6 @@ if ! docker network inspect "$NETWORK" &>/dev/null; then
     docker network create \
         --driver bridge \
         --opt com.docker.network.bridge.enable_icc=false \
-        --subnet=172.30.0.0/24 \
         "$NETWORK" &>/dev/null
 fi
 
