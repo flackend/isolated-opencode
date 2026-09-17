@@ -61,7 +61,7 @@ sandbox_run() {
         --pids-limit 256 \
         --memory 4g \
         --cpus 2 \
-        --tmpfs /tmp:rw,nosuid,size=512m \
+        --tmpfs /tmp:rw,exec,nosuid,size=512m \
         --tmpfs /run:rw,noexec,nosuid,size=64m \
         --network "$NETWORK" \
         --dns 1.1.1.1 \
@@ -300,7 +300,7 @@ SECRET_TEST=$(docker run --rm \
     --security-opt no-new-privileges:true \
     --cap-drop ALL \
     --user 1000:1000 \
-    --tmpfs /tmp:rw,nosuid,size=512m \
+    --tmpfs /tmp:rw,exec,nosuid,size=512m \
     --tmpfs /run:rw,noexec,nosuid,size=64m \
     --network "$NETWORK" \
     -v "$TEST_SECRET_DIR/test_api_key:/run/secrets/test_api_key:ro" \
