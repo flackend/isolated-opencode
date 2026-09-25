@@ -157,17 +157,17 @@ else
 fi
 
 # Test 7: /tmp has nosuid and /run has noexec
-RUN_MOUNT=$(sandbox_run mount | grep "on /run" 2>&1 || true)
-TMP_MOUNT=$(sandbox_run mount | grep "on /tmp" 2>&1 || true)
-if echo "$RUN_MOUNT" | grep -q "noexec"; then
+RUN_MOUNT_OPTS=$(sandbox_run grep " /run " /proc/mounts 2>&1 || true)
+TMP_MOUNT_OPTS=$(sandbox_run grep " /tmp " /proc/mounts 2>&1 || true)
+if echo "$RUN_MOUNT_OPTS" | grep -q "noexec"; then
     pass "/run has noexec flag"
 else
-    fail "/run does NOT have noexec flag" "$RUN_MOUNT"
+    fail "/run does NOT have noexec flag" "$RUN_MOUNT_OPTS"
 fi
-if echo "$TMP_MOUNT" | grep -q "nosuid"; then
+if echo "$TMP_MOUNT_OPTS" | grep -q "nosuid"; then
     pass "/tmp has nosuid flag"
 else
-    fail "/tmp does NOT have nosuid flag" "$TMP_MOUNT"
+    fail "/tmp does NOT have nosuid flag" "$TMP_MOUNT_OPTS"
 fi
 
 section "Security — Dangerous Tools Absent"

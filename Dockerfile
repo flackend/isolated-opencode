@@ -86,8 +86,12 @@ RUN mkdir -p /home/coder/.config /home/coder/.cache /home/coder/.local /home/cod
 # ── Clean up: reduce attack surface ──────────────────────────────────
 # Remove package manager cache; agent can't easily install new packages
 # Remove shadow (only needed during build for useradd)
+# Remove dangerous busybox symlinks
 RUN rm -rf /var/cache/apk/* /tmp/* \
-    && apk del shadow
+    && apk del shadow \
+    && rm -f /bin/su /usr/bin/nc /sbin/ip \
+    /bin/login /bin/mount /bin/umount /bin/ping /bin/ping6 \
+    /bin/netstat /sbin/ipcalc /usr/bin/telnet 2>/dev/null || true
 
 # ── Copy entrypoint script ───────────────────────────────────────────
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
