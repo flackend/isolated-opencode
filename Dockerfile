@@ -65,13 +65,22 @@ RUN curl -fsSL https://herdr.dev/install.sh | sh \
     || true
 # Note: Install path may vary. The build will verify the binary exists.
 
+# ── Install Antigravity CLI ──────────────────────────────────────────
+RUN curl -fsSL https://antigravity.google/cli/install.sh | bash \
+    && install -m 755 /root/.local/bin/agy /usr/local/bin/agy 2>/dev/null \
+    || install -m 755 /root/.antigravity/bin/agy /usr/local/bin/agy 2>/dev/null \
+    || true \
+    && [ -f /usr/local/bin/agy ] && ln -sf /usr/local/bin/agy /usr/local/bin/antigravity || true
+# Note: Install path may vary. The build will verify the binary exists.
+
 # ── Verify critical binaries exist ───────────────────────────────────
 RUN opencode --version || echo "WARNING: opencode binary not found at expected path" \
-    && herdr --version || echo "WARNING: herdr binary not found at expected path"
+    && herdr --version || echo "WARNING: herdr binary not found at expected path" \
+    && (agy --version || echo "WARNING: agy binary not found at expected path")
 
 # ── Create workspace and writable directories ─────────────────────────
 RUN mkdir -p /workspace && chown coder:coder /workspace
-RUN mkdir -p /home/coder/.config /home/coder/.cache /home/coder/.local \
+RUN mkdir -p /home/coder/.config /home/coder/.cache /home/coder/.local /home/coder/.gemini \
     && chown -R coder:coder /home/coder
 
 # ── Clean up: reduce attack surface ──────────────────────────────────
@@ -86,7 +95,7 @@ RUN chmod 755 /usr/local/bin/entrypoint.sh
 
 # ── Health check ──────────────────────────────────────────────────────
 HEALTHCHECK --interval=60s --timeout=10s --retries=3 \
-    CMD pgrep -f "opencode\|herdr\|bash" || exit 1
+    CMD pgrep -f "opencode\|herdr\|agy\|antigravity\|bash" || exit 1
 
 # ── Runtime configuration ────────────────────────────────────────────
 USER coder

@@ -260,7 +260,7 @@ for entry in "${REQUIRED_TOOLS[@]}"; do
     fi
 done
 
-section "Tooling — OpenCode & herdr"
+section "Tooling — AI Coding Agents (OpenCode, Antigravity CLI, herdr)"
 
 # Test: OpenCode installed
 OC_CHECK=$(sandbox_run bash -c "opencode --version" 2>&1 || true)
@@ -268,6 +268,22 @@ if echo "$OC_CHECK" | grep -qiE "opencode|version|[0-9]+\.[0-9]+"; then
     pass "OpenCode installed ($OC_CHECK)"
 else
     fail "OpenCode not found or not working" "$OC_CHECK"
+fi
+
+# Test: Antigravity CLI installed
+AGY_CHECK=$(sandbox_run bash -c "agy --version" 2>&1 || true)
+if echo "$AGY_CHECK" | grep -qiE "antigravity|agy|version|[0-9]+\.[0-9]+"; then
+    pass "Antigravity CLI installed ($AGY_CHECK)"
+else
+    fail "Antigravity CLI not found or not working" "$AGY_CHECK"
+fi
+
+# Test: antigravity alias/symlink
+AGY_LINK=$(sandbox_run which antigravity 2>&1 || true)
+if echo "$AGY_LINK" | grep -q "^/"; then
+    pass "antigravity alias available ($AGY_LINK)"
+else
+    fail "antigravity alias not found" "$AGY_LINK"
 fi
 
 # Test: herdr installed
